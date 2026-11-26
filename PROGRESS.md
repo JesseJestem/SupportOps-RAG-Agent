@@ -1,57 +1,33 @@
 # Development Progress
 
-## 2026-11-26 — Stage 0: Project Bootstrap
+## 2026-11-26 — Testing Fundamentals
 
 ### Completed
-- Initial technical assessment: 7/14.
-- Knowledge check: 4.5/5.
-- Git repository and dev branch initialized.
-- Python src layout configured.
-- Project dependencies configured in pyproject.toml.
-- FastAPI health-check endpoint implemented.
-- Initial API integration test implemented.
-- Initial README and .gitignore created.
+- Implemented reusable TestClient fixture.
+- Implemented fixture setup and teardown.
+- Added parametrized API integration tests.
+- Added positive and negative test cases.
+- Completed code review: 9.5/10.
+- Knowledge check: 4/5.
+- All 8 tests passed in the review environment.
 
 ### Learned
-- Python package structure.
-- Runtime and development dependencies.
-- FastAPI and Uvicorn responsibilities.
-- Basic API testing with TestClient.
+- Arrange, Act, Assert pattern.
+- Pytest fixtures and fixture scopes.
+- Generator-based fixtures.
+- Resource lifecycle management.
+- Test parametrization.
+- Positive and negative testing.
+- Mock, Stub and Fake fundamentals.
 
 ### Issues / Gaps
-- Incorrect package import in test_health.py.
-- README lacks installation and execution instructions.
-- Local linting and type checking results pending.
+- Mock vs Fake requires further practical experience.
+- Local quality checks and PR merge pending.
+- Clean environment verification pending.
 
 ### Next Task
-- Task 0.1.1: Address code review findings.
+- Finalize Task 0.2 and merge into dev.
+- Task 0.3: REST & Pydantic.
 
 ### Current Stage
 - Stage 0 — Setup & Architecture (In Progress).
-
-## 2026-11-26 — Project Bootstrap Completed
-
-### Completed
-- Task 0.1: Project Bootstrap.
-- Fixed package imports.
-- Updated test dependency to httpx2.
-- Passed pytest, Ruff, mypy and pip check.
-- Committed and pushed changes to dev.
-
-### Learned
-- Editable package installation.
-- Runtime and development dependencies.
-- API integration testing.
-- Linting and static type checking.
-- Dependency deprecation handling.
-
-### Issues / Gaps
-- Clean environment installation verification pending.
-- Advanced testing techniques require practice.
-
-### Next Task
-- Task 0.2: API Testing Improvements.
-- Fixtures, parametrization and negative test cases.
-
-### Current Stage
-- Stage 0 — Setup & Architecture.
