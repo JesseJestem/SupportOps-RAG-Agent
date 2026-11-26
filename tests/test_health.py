@@ -14,7 +14,7 @@ from fastapi.testclient import TestClient
         ("GET", "/openapi.json", 200),
     ],
 )
-def test_health(
+def test_endpoint_status_code(
     client: TestClient,
     method: str,
     endpoint: str,
@@ -29,3 +29,4 @@ def test_health_check(client: TestClient) -> None:
     response = client.get("/health")
 
     assert response.json() == {"status": "ok"}
+    assert response.status_code == 200
