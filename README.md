@@ -51,18 +51,18 @@ but not yet implemented.
 
 ## Tech Stack
 
-| Category | Technologies | Status |
-|---|---|---|
-| Language | Python 3.12+ | Implemented |
-| Backend | FastAPI, Uvicorn | Implemented |
-| Data Validation | Pydantic | Planned explicit schemas |
-| LLM Integration | OpenAI Responses API | Planned |
+| Category | Technologies                  | Status |
+|---|-------------------------------|---|
+| Language | Python 3.12+                  | Implemented |
+| Backend | FastAPI, Uvicorn              | Implemented |
+| Data Validation | Pydantic                      | Planned explicit schemas |
+| LLM Integration | OpenAI Responses API          | Planned |
 | Retrieval | Embeddings, similarity search | Planned |
-| Vector Database | Chroma | Planned |
-| Testing | pytest, httpx | Implemented |
-| Code Quality | Ruff, mypy | Configured dependencies |
-| Containerization | Docker | Planned |
-| CI/CD | GitHub Actions | Planned |
+| Vector Database | Chroma                        | Planned |
+| Testing | pytest, httpx2                | Implemented |
+| Code Quality | Ruff, mypy                    | Configured dependencies |
+| Containerization | Docker                        | Planned |
+| CI/CD | GitHub Actions                | Planned |
 
 The initial implementation uses a lightweight Python architecture
 without LangChain or LangGraph to make the core RAG and agent
@@ -257,7 +257,8 @@ SupportOps-RAG-Agent/
 │       └── main.py
 │
 ├── tests/
-│   └── test_health.py
+│   ├── test_health.py
+│   └── conftest.py
 │
 ├── .gitignore
 ├── pyproject.toml
