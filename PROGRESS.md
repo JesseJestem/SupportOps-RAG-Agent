@@ -31,3 +31,51 @@
 
 ### Current Stage
 - Stage 0 — Setup & Architecture (In Progress).
+
+## 2026-11-27 — Chat API Contract & Validation
+
+### Completed
+- Task 0.3: Chat API Contract & Validation.
+- Declared Pydantic as a direct runtime dependency.
+- Implemented ChatRequest and ChatResponse schemas.
+- Implemented message length constraints and whitespace normalization.
+- Implemented strict integer validation for top_k.
+- Configured default values and numeric boundaries.
+- Implemented POST /chat with a predefined stub response.
+- Added 15 parametrized chat API validation scenarios.
+- Added response contract integration test.
+- Added unit tests for default values and whitespace normalization.
+- Passed all 26 automated test cases.
+- Passed local code quality checks.
+
+### Learned
+- Pydantic BaseModel.
+- Runtime validation and static type checking.
+- Field constraints and StringConstraints.
+- Annotated metadata.
+- Strict Mode and Type Coercion.
+- Required and nullable fields.
+- Request and response models.
+- API contracts.
+- Serialization, deserialization, and normalization.
+- HTTP request and response validation.
+- Boundary Value Analysis.
+- Stub implementations.
+- Pytest collection, setup, execution, and teardown.
+
+### Issues / Gaps
+- Dependency Injection requires further practice.
+- API and business logic are not separated yet.
+- External dependency mocking requires further practice.
+- Clean environment installation verification pending.
+
+### Next Task
+- Task 0.4: Application Architecture & Dependency Injection.
+- FastAPI APIRouter.
+- Separation of Concerns.
+- Service Layer.
+- FastAPI Depends.
+- Dependency overrides for testing.
+
+### Current Stage
+- Stage 0 — Setup & Architecture (In Progress).
