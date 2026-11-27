@@ -45,6 +45,14 @@ The following functionality is currently implemented:
 - Automated API integration test using pytest and FastAPI TestClient.
 - Development dependencies for linting, formatting, and static type checking.
 - Git repository with development and stable branches.
+- Typed POST /chat endpoint with a stub response.
+- Pydantic request and response models.
+- Input validation with strict types and field constraints.
+- Automatic whitespace normalization.
+- Parametrized API integration tests.
+- Unit tests for Pydantic models.
+- Positive, negative, and boundary value testing.
+- 26 automated test cases.
 
 RAG, vector search, LLM integration, and agent tool calling are planned
 but not yet implemented.
@@ -314,7 +322,7 @@ The planned system follows this workflow:
 |---|---|---|---|
 | GET | `/health` | Service health check | Implemented |
 | POST | `/documents/ingest` | Index knowledge-base documents | Planned |
-| POST | `/chat` | Process user questions | Planned |
+| POST | `/chat` | Process chat requests | Implemented (Stub) |
 | POST | `/tickets/confirm` | Confirm a proposed support ticket | Planned |
 | GET | `/tickets/{id}` | Retrieve a mock ticket | Planned |
 
@@ -355,8 +363,8 @@ such as the OpenAI API or a vector database.
 - [x] Add initial API integration test.
 - [x] Document local installation and execution.
 - [ ] Verify installation from a clean environment.
-- [ ] Add Pydantic request and response schemas.
-- [ ] Introduce dependency injection.
+- [x] Add Pydantic request and response schemas.
+- [x] Introduce dependency injection.
 - [ ] Verify linting, formatting, and type checking.
 
 ### Stage 1 — Document Ingestion
