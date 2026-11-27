@@ -79,3 +79,47 @@
 
 ### Current Stage
 - Stage 0 — Setup & Architecture (In Progress).
+
+## 2026-11-27 — API & Service Layer Refactoring
+
+### Completed
+- Created API and Service packages.
+- Extracted health and chat endpoints into dedicated APIRouter modules.
+- Implemented ChatService with a typed public interface.
+- Delegated chat processing to the Service Layer.
+- Separated application configuration from HTTP handling and business logic.
+- Configured application metadata and Swagger tags.
+- Implemented an isolated ChatService unit test.
+- Preserved existing API behavior covered by regression tests.
+- Passed all 27 automated tests.
+
+### Learned
+- Separation of Concerns.
+- API Layer and Service Layer.
+- APIRouter and router registration.
+- Absolute and relative imports.
+- Circular imports.
+- Coupling and Cohesion.
+- Delegation.
+- Thin Controller.
+- Composition Root.
+- Python instance methods and object lifecycle.
+- Arrange, Act, Assert pattern.
+- Unit testing vs integration testing.
+- Runtime type checking with isinstance().
+
+### Issues / Gaps
+- ChatService is instantiated directly inside the endpoint.
+- Dependencies are not easily replaceable in API integration tests.
+- Dependency lifecycle management is not implemented.
+- Final static analysis checks, Swagger UI verification, and Pull Request are pending.
+
+### Next Task
+- Task 0.5: Dependency Injection.
+- Dependency providers.
+- FastAPI Depends().
+- Dependency overrides.
+- Testing with replaceable service implementations.
+
+### Current Stage
+- Stage 0 — Setup & Architecture (In Progress).

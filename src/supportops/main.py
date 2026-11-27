@@ -1,16 +1,12 @@
 from fastapi import FastAPI
 
-from supportops.schemas import ChatRequest, ChatResponse
+from supportops.api.chat import router as chat_router
+from supportops.api.health import router as health_router
 
-app = FastAPI()
-
-
-@app.get("/health")
-def health_check() -> dict[str, str]:
-    return {"status": "ok"}
+app = FastAPI(
+    title="SupportOps RAG Agent",
+)
 
 
-@app.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest) -> ChatResponse:
-    response = ChatResponse(answer="Chat is not implemented yet.", sources=[])
-    return response
+app.include_router(health_router)
+app.include_router(chat_router)
