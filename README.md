@@ -34,6 +34,11 @@ The project uses fictional support scenarios and synthetic documentation. The in
 - Parametrized API tests, response contract checks, and Pydantic unit tests, including positive, negative, and boundary cases.
 - **26 automated test cases**; all 26 reported passing for Task 0.3.
 - Ruff and mypy development tooling.
+- Modular API architecture using FastAPI APIRouter.
+- Separation of API and Service layers.
+- Independently testable ChatService.
+- Application configuration and router registration.
+- 27 automated test cases, including API integration and service unit tests.
 
 The chat endpoint currently returns a fixed response. RAG, LLM integration, and agent tool calling are not yet implemented.
 
@@ -266,7 +271,7 @@ Invalid request data returns HTTP 422 using FastAPI's default validation error f
 - [x] 0.1 — Project bootstrap, health endpoint, dependency configuration, and initial checks.
 - [x] 0.2 — Testing fundamentals: fixtures, parametrization, positive and negative cases.
 - [x] 0.3 — REST & Pydantic: chat API contract, validation, and boundary tests.
-- [ ] 0.4 — Application architecture: API routers and service layer.
+- [x] 0.4 — Application architecture: API routers and service layer.
 - [ ] 0.5 — Dependency injection and dependency overrides for testing.
 - [ ] 0.6 — Asynchronous Python and blocking vs non-blocking I/O.
 - [ ] 0.7 — Final technical review and clean-environment verification.
