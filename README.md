@@ -2,553 +2,391 @@
 
 **AI-Powered Support Assistant with RAG, Tool Calling & FastAPI**
 
-An AI-powered support assistant designed to answer questions using a
-knowledge base, retrieve relevant documentation, and automate support
-workflows through LLM tool calling.
+SupportOps RAG Agent is a Python and FastAPI portfolio project exploring how retrieval-augmented generation (RAG) and LLM tool calling can support SaaS customer service workflows.
 
-The project focuses on building a reliable, testable, and maintainable
-AI agent using modern software and AI engineering practices.
+The goal is to build a reliable, testable, and maintainable assistant that answers questions using a knowledge base, cites its sources, and creates mock support tickets only after explicit user confirmation.
 
-> **Status:** In development
->
-> **Current Stage:** Stage 0 — Setup & Architecture
+> **Status:** In development  
+> **Current stage:** Stage 0 — Setup & Architecture  
+> **Latest completed task:** 0.3 — Chat API Contract & Validation  
+> **Next task:** 0.4 — Application Architecture
 
 ## Overview
 
-Support teams often spend significant time searching documentation,
-investigating recurring issues, and manually creating support tickets.
+Support teams spend time searching documentation, investigating recurring issues, and creating tickets. The planned assistant will help by:
 
-SupportOps RAG Agent explores how Retrieval-Augmented Generation (RAG)
-and AI agents can improve these workflows.
+- Retrieving relevant information from a document knowledge base.
+- Generating answers grounded in retrieved documents and providing source references.
+- Executing predefined tools through LLM function calling.
+- Creating mock support tickets after explicit user confirmation.
+- Handling insufficient context, external service failures, and invalid tool arguments.
+- Measuring retrieval and answer quality through reproducible evaluation.
 
-The system is designed to:
-
-- Retrieve relevant information from a document knowledge base.
-- Generate answers grounded in retrieved documents.
-- Provide references to the information used.
-- Execute predefined tools through LLM function calling.
-- Create mock support tickets after explicit user confirmation.
-- Handle missing information and tool failures safely.
-- Measure retrieval and answer quality through automated evaluation.
-
-The project uses fictional support scenarios and synthetic documentation.
+The project uses fictional support scenarios and synthetic documentation. The initial implementation deliberately avoids LangChain and LangGraph to make the underlying mechanisms explicit.
 
 ## Current Features
 
-The following functionality is currently implemented:
+- Installable Python package using a `src` layout and `pyproject.toml`.
+- FastAPI application with `GET /health` and a typed `POST /chat` stub.
+- Pydantic v2 request and response models, whitespace normalization, length constraints, and strict validation of retrieval parameters.
+- Swagger UI, ReDoc, and generated OpenAPI specification.
+- Reusable TestClient fixture with setup and teardown.
+- Parametrized API tests, response contract checks, and Pydantic unit tests, including positive, negative, and boundary cases.
+- **26 automated test cases**; all 26 reported passing for Task 0.3.
+- Ruff and mypy development tooling.
 
-- Python project with a modular `src` layout.
-- Dependency management through `pyproject.toml`.
-- FastAPI application.
-- `GET /health` endpoint.
-- Automatic API documentation using Swagger UI and ReDoc.
-- Automated API integration test using pytest and FastAPI TestClient.
-- Development dependencies for linting, formatting, and static type checking.
-- Git repository with development and stable branches.
-- Typed POST /chat endpoint with a stub response.
-- Pydantic request and response models.
-- Input validation with strict types and field constraints.
-- Automatic whitespace normalization.
-- Parametrized API integration tests.
-- Unit tests for Pydantic models.
-- Positive, negative, and boundary value testing.
-- 26 automated test cases.
-
-RAG, vector search, LLM integration, and agent tool calling are planned
-but not yet implemented.
+The chat endpoint currently returns a fixed response. RAG, LLM integration, and agent tool calling are not yet implemented.
 
 ## Tech Stack
 
-| Category | Technologies                  | Status |
-|---|-------------------------------|---|
-| Language | Python 3.12+                  | Implemented |
-| Backend | FastAPI, Uvicorn              | Implemented |
-| Data Validation | Pydantic                      | Planned explicit schemas |
-| LLM Integration | OpenAI Responses API          | Planned |
+| Category | Technologies | Status |
+|---|---|---|
+| Language | Python 3.12+ | Implemented |
+| Backend | FastAPI, Uvicorn | Implemented |
+| Data validation | Pydantic v2 | Implemented |
+| Testing | pytest, httpx2 | Implemented |
+| Code quality | Ruff, mypy | In use |
+| LLM integration | OpenAI Responses API | Planned |
 | Retrieval | Embeddings, similarity search | Planned |
-| Vector Database | Chroma                        | Planned |
-| Testing | pytest, httpx2                | Implemented |
-| Code Quality | Ruff, mypy                    | Configured dependencies |
-| Containerization | Docker                        | Planned |
-| CI/CD | GitHub Actions                | Planned |
-
-The initial implementation uses a lightweight Python architecture
-without LangChain or LangGraph to make the core RAG and agent
-mechanisms easier to understand, test, and maintain.
+| Vector database | Chroma | Planned |
+| Containerization | Docker | Planned |
+| CI/CD | GitHub Actions | Planned |
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.12 or higher
-- Git
-- pip
+- Python 3.12 or higher (development tested on Windows with Python 3.13).
+- Git and pip.
 
-No OpenAI API key or external database is required for the current
-implementation.
+No API key or external database is required for the current implementation.
 
 ### Installation
 
-Clone the repository:
+Clone the active development branch:
 
 ```bash
 git clone --branch dev https://github.com/JesseJestem/SupportOps-RAG-Agent.git
 cd SupportOps-RAG-Agent
-```
-
-Create a virtual environment:
-
-```bash
 python -m venv .venv
 ```
 
-Activate the virtual environment.
+Activate the virtual environment:
 
-**Windows (PowerShell):**
+**Windows (PowerShell)**
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-**Linux / macOS:**
+**Linux / macOS**
 
 ```bash
 source .venv/bin/activate
 ```
 
-Upgrade pip:
+Install the package and development dependencies:
 
 ```bash
 python -m pip install --upgrade pip
-```
-
-Install the project and development dependencies:
-
-```bash
 python -m pip install -e ".[dev]"
+python -m pip check
 ```
 
-The `-e` flag installs the project in editable mode, allowing source
-code changes to take effect without reinstalling the package.
-
-The `dev` extra includes testing and code quality dependencies.
+Editable installation (`-e`) makes changes to Python source files available without reinstalling the package. The `dev` extra includes testing and code quality tools. Dependency versions are not fully locked yet.
 
 ### Running the Application
-
-From the project root, with the virtual environment activated:
 
 ```bash
 python -m uvicorn supportops.main:app --reload
 ```
 
-The API will be available at:
-
-http://127.0.0.1:8000
+The `--reload` option is intended for local development only.
 
 | Resource | URL |
 |---|---|
-| Health Check | http://127.0.0.1:8000/health |
+| Health check | http://127.0.0.1:8000/health |
 | Swagger UI | http://127.0.0.1:8000/docs |
 | ReDoc | http://127.0.0.1:8000/redoc |
-| OpenAPI Schema | http://127.0.0.1:8000/openapi.json |
-
-To verify that the application is running:
-
-**Windows:**
-
-```powershell
-curl.exe -i http://127.0.0.1:8000/health
-```
-
-**Linux / macOS:**
-
-```bash
-curl -i http://127.0.0.1:8000/health
-```
-
-Expected HTTP status:
-
-```text
-200 OK
-```
-
-Expected response:
-
-```json
-{
-    "status": "ok"
-}
-```
-
-The `--reload` option is intended for local development only.
+| OpenAPI schema | http://127.0.0.1:8000/openapi.json |
 
 ### Running Tests
 
-Run all automated tests from the project root:
-
-```bash
-python -m pytest
-```
-
-Run tests with detailed output:
+From the project root, with the virtual environment activated:
 
 ```bash
 python -m pytest -v
 ```
 
-Run a specific test file:
+Run individual test modules:
 
 ```bash
 python -m pytest tests/test_health.py -v
+python -m pytest tests/test_chat.py -v
 ```
 
-The current integration test verifies:
+The current suite covers 8 health/routing cases, 15 chat validation cases, 1 chat response contract case, and 2 Pydantic unit tests. FastAPI TestClient runs API tests without a separate Uvicorn server or external network requests.
 
-- HTTP response status.
-- JSON response body.
-- Health-check endpoint routing.
-
-Tests use FastAPI TestClient and do not require a running
-Uvicorn server.
+Latest reported result for Task 0.3: `26 passed`. Clean-environment installation verification remains pending.
 
 ### Code Quality Checks
 
-Check the code for linting issues:
-
 ```bash
+python -m pip check
 python -m ruff check .
-```
-
-Check code formatting:
-
-```bash
 python -m ruff format --check .
+python -m mypy src tests
+python -m pytest -v
 ```
 
-Automatically format the code:
+To format files automatically:
 
 ```bash
 python -m ruff format .
 ```
 
-Automatically fix supported linting issues:
+To apply supported lint fixes, review the resulting diff:
 
 ```bash
 python -m ruff check . --fix
 ```
 
-Run static type checking:
-
-```bash
-python -m mypy src
-```
-
-Recommended checks before committing:
-
-```bash
-python -m ruff check .
-python -m ruff format --check .
-python -m mypy src
-python -m pytest -v
-```
-
 ## Project Structure
-
-The project follows a `src` layout to separate application code
-from tests and project configuration.
 
 ```text
 SupportOps-RAG-Agent/
 ├── src/
 │   └── supportops/
 │       ├── __init__.py
-│       └── main.py
-│
+│       ├── main.py
+│       └── schemas.py
 ├── tests/
-│   ├── test_health.py
-│   └── conftest.py
-│
+│   ├── conftest.py
+│   ├── test_chat.py
+│   └── test_health.py
 ├── .gitignore
-├── pyproject.toml
 ├── LICENSE
-└── README.md
+├── PROGRESS.md
+├── README.md
+└── pyproject.toml
 ```
 
-Additional modules will be introduced as the project grows.
+`main.py` currently defines the application and routes. `schemas.py` defines chat request and response contracts. API routers and a service layer will be introduced in Task 0.4.
 
 ## System Architecture
 
-The planned architecture separates the API, agent orchestration,
-retrieval, LLM integration, and storage layers.
+### Current implementation
 
 ```mermaid
 flowchart TD
-    User[User] --> API[FastAPI API]
-    API --> Agent[Agent Orchestrator]
-
-    Agent --> Retrieval[Knowledge Base Retrieval]
-    Agent --> Tools[Support Tools]
-
-    Retrieval --> Chroma[(Chroma Vector Database)]
-    Retrieval --> Context[Retrieved Context]
-
-    Tools --> Confirmation{User Confirmation}
-    Confirmation -->|Confirmed| Ticket[Mock Ticket Service]
-    Confirmation -->|Not Confirmed| Pending[Pending Action]
-
-    Context --> LLM[LLM Response Generation]
-    Ticket --> LLM
-    Pending --> LLM
-
-    LLM --> Response[Answer and Sources]
-    Response --> User
+    Client[HTTP Client] --> API[FastAPI - main.py]
+    API --> Health[Health endpoint]
+    API --> Request[ChatRequest validation]
+    Request --> Stub[Fixed chat response]
+    Stub --> Response[ChatResponse serialization]
 ```
 
-The planned system follows this workflow:
+### Planned architecture
 
-1. **Document Ingestion** — Load and process support documentation.
-2. **Indexing** — Split documents into chunks, generate embeddings,
-   and store them in a vector database.
-3. **Retrieval** — Search for relevant information based on a user's question.
-4. **Agent Orchestration** — Decide whether to retrieve information,
-   generate an answer, or call a tool.
-5. **Tool Execution** — Perform predefined operations with validated inputs.
-6. **Response Generation** — Return a structured response with sources.
-7. **Evaluation** — Measure quality, reliability, and performance.
+```mermaid
+flowchart TD
+    Docs[Synthetic knowledge base] --> Ingestion[Document ingestion and chunking]
+    Ingestion --> Embeddings[Embeddings]
+    Embeddings --> DB[(Chroma)]
+    User[User] --> API[FastAPI]
+    API --> Agent[Agent orchestrator]
+    Agent <--> LLM[LLM client]
+    Agent --> Retrieval[Knowledge search]
+    Retrieval --> DB
+    Retrieval --> Agent
+    Agent --> Tools[Validated support tools]
+    Tools --> Confirm{Explicit user confirmation}
+    Confirm -->|Pending| Proposal[Return pending action]
+    Confirm -->|Confirmed| Ticket[Mock ticket service]
+    Ticket --> Agent
+    Agent --> Answer[Answer and sources]
+```
+
+This diagram is a conceptual target, not a description of the current implementation. Confirmation will be enforced in application logic before ticket creation, rather than delegated to the LLM.
 
 ## API Endpoints
 
 | Method | Endpoint | Description | Status |
 |---|---|---|---|
-| GET | `/health` | Service health check | Implemented |
+| GET | `/health` | Application liveness | Implemented |
+| POST | `/chat` | Validate chat requests and return a response | Implemented (stub) |
 | POST | `/documents/ingest` | Index knowledge-base documents | Planned |
-| POST | `/chat` | Process chat requests | Implemented (Stub) |
 | POST | `/tickets/confirm` | Confirm a proposed support ticket | Planned |
 | GET | `/tickets/{id}` | Retrieve a mock ticket | Planned |
 
-### Health Check
+### GET /health
 
-```http
-GET /health
-```
-
-Response:
+HTTP 200:
 
 ```json
 {
-    "status": "ok"
+  "status": "ok"
 }
 ```
 
-This endpoint provides a basic application liveness check.
+This is a basic liveness check. It does not verify the readiness of external services.
 
-It does not verify the availability of external dependencies,
-such as the OpenAI API or a vector database.
+### POST /chat
+
+Example request:
+
+```json
+{
+  "message": "How can I reset my password?",
+  "top_k": 5
+}
+```
+
+| Field | Type | Default | Constraints |
+|---|---|---|---|
+| `message` | string | Required | 1–2000 characters after trimming leading and trailing whitespace |
+| `top_k` | integer | `5` | 1–20 inclusive; strict integer validation (strings, floats, and booleans rejected) |
+
+HTTP 200 (current stub response):
+
+```json
+{
+  "answer": "Chat is not implemented yet.",
+  "sources": []
+}
+```
+
+Invalid request data returns HTTP 422 using FastAPI's default validation error format. The current implementation does not perform retrieval, call an LLM, or create tickets. The message length limit counts characters, not LLM tokens.
 
 ## Development Roadmap
 
-### Stage 0 — Setup & Architecture
+### Stage 0 — Setup & Architecture (In Progress)
 
-**Status: In Progress**
-
-- [x] Create GitHub repository.
-- [x] Initialize Python project.
-- [x] Create project directory structure.
-- [x] Set up virtual environment.
-- [x] Configure `.gitignore`.
-- [x] Configure `pyproject.toml`.
-- [x] Install project dependencies.
-- [x] Configure FastAPI application.
-- [x] Implement `GET /health`.
-- [x] Add initial API integration test.
-- [x] Document local installation and execution.
-- [ ] Verify installation from a clean environment.
-- [x] Add Pydantic request and response schemas.
-- [x] Introduce dependency injection.
-- [ ] Verify linting, formatting, and type checking.
+- [x] 0.0 — Initial technical assessment.
+- [x] 0.1 — Project bootstrap, health endpoint, dependency configuration, and initial checks.
+- [x] 0.2 — Testing fundamentals: fixtures, parametrization, positive and negative cases.
+- [x] 0.3 — REST & Pydantic: chat API contract, validation, and boundary tests.
+- [ ] 0.4 — Application architecture: API routers and service layer.
+- [ ] 0.5 — Dependency injection and dependency overrides for testing.
+- [ ] 0.6 — Asynchronous Python and blocking vs non-blocking I/O.
+- [ ] 0.7 — Final technical review and clean-environment verification.
 
 ### Stage 1 — Document Ingestion
 
-- [ ] Create synthetic knowledge-base documents.
-- [ ] Load Markdown and TXT documents.
-- [ ] Extract document metadata.
-- [ ] Implement text chunking.
-- [ ] Implement token-aware chunking.
-- [ ] Generate embeddings.
-- [ ] Store document chunks in Chroma.
+- [ ] Create synthetic Markdown and TXT knowledge-base documents.
+- [ ] Load documents and extract metadata.
+- [ ] Implement text and token-aware chunking.
+- [ ] Generate embeddings and store chunks in Chroma.
 - [ ] Add ingestion tests.
 
 ### Stage 2 — Basic RAG
 
-- [ ] Implement vector similarity search.
-- [ ] Implement top-k retrieval.
-- [ ] Build prompts from retrieved context.
+- [ ] Implement vector similarity search and top-k retrieval.
+- [ ] Construct prompts from retrieved context.
 - [ ] Integrate the OpenAI Responses API.
-- [ ] Implement the `POST /chat` endpoint.
-- [ ] Return answers with source references.
-- [ ] Handle insufficient-context scenarios.
+- [ ] Replace the `/chat` stub with the RAG pipeline.
+- [ ] Return answers with source references and handle insufficient context.
 - [ ] Add retrieval and RAG integration tests.
 
 ### Stage 3 — Agent & Tool Calling
 
-- [ ] Implement function calling.
-- [ ] Implement an agent execution loop.
-- [ ] Add a knowledge-base search tool.
-- [ ] Add a mock ticket creation tool.
-- [ ] Validate tool arguments.
-- [ ] Implement explicit confirmation for ticket creation.
-- [ ] Implement state management.
-- [ ] Handle tool errors, timeouts, and retries.
-- [ ] Prevent duplicate ticket creation.
+- [ ] Implement function calling and an agent execution loop.
+- [ ] Add knowledge-base search and mock ticket creation tools.
+- [ ] Validate tool arguments and enforce explicit confirmation.
+- [ ] Manage action state and prevent duplicate ticket creation.
+- [ ] Handle tool failures, timeouts, and retries.
 
 ### Stage 4 — Evaluation & Testing
 
 - [ ] Create a reproducible golden dataset.
-- [ ] Measure retrieval Recall@K.
-- [ ] Measure Mean Reciprocal Rank (MRR).
-- [ ] Evaluate answer correctness.
-- [ ] Evaluate groundedness and source accuracy.
-- [ ] Evaluate correct abstention.
-- [ ] Add regression tests for agent workflows.
-- [ ] Mock external LLM dependencies.
+- [ ] Measure Recall@K and Mean Reciprocal Rank (MRR).
+- [ ] Evaluate answer correctness, groundedness, source accuracy, and abstention.
+- [ ] Add regression tests and mock external LLM dependencies.
 - [ ] Publish reproducible evaluation results.
 
 ### Stage 5 — Production Readiness
 
-- [ ] Add environment-based configuration.
-- [ ] Implement structured logging.
-- [ ] Improve exception handling.
-- [ ] Configure request timeouts and retries.
-- [ ] Implement security safeguards.
+- [ ] Add environment-based configuration, structured logging, and error handling.
+- [ ] Configure timeouts, retries, and security safeguards.
 - [ ] Add basic observability.
-- [ ] Containerize the application with Docker.
-- [ ] Configure GitHub Actions.
-- [ ] Verify reproducible deployment.
+- [ ] Containerize with Docker and configure GitHub Actions.
+- [ ] Verify reproducible deployment and dependency management.
 
-### Stage 6 — Portfolio & Documentation
+### Stage 6 — Portfolio & Interview
 
-- [ ] Finalize system architecture documentation.
-- [ ] Document engineering decisions and trade-offs.
-- [ ] Publish evaluation results.
-- [ ] Create an end-to-end demonstration.
-- [ ] Document system limitations.
-- [ ] Prepare the first stable release.
+- [ ] Finalize architecture documentation and engineering trade-offs.
+- [ ] Publish evaluation results and an end-to-end demo.
+- [ ] Document limitations and prepare the first stable release.
+- [ ] Prepare an English technical presentation and project walkthrough.
+
+See [PROGRESS.md](PROGRESS.md) for the development history.
 
 ## Engineering Principles
 
-The project follows several key engineering principles:
-
-- **Modularity:** Separate API, business logic, retrieval,
-  LLM integration, and storage.
-
-- **Testability:** Support unit and integration testing with mocked
-  external dependencies.
-
-- **Reliability:** Handle errors, timeouts, retries,
-  and invalid tool responses.
-
-- **Transparency:** Provide supporting sources for generated answers.
-
-- **Safety:** Require explicit confirmation before actions
-  with side effects.
-
-- **Maintainability:** Use type hints, clear interfaces,
-  and automated code quality checks.
-
-- **Reproducibility:** Document dependencies, configuration,
-  execution, and evaluation procedures.
-
-- **Simplicity:** Avoid unnecessary frameworks and abstractions.
+- **Modularity:** Separate HTTP handling, application logic, retrieval, LLM integration, and storage as the project grows.
+- **Testability:** Use unit and integration tests with controlled external dependencies.
+- **Reliability:** Handle errors, timeouts, retries, and invalid responses.
+- **Transparency:** Provide supporting sources and abstain when evidence is insufficient.
+- **Safety:** Validate tool arguments and require explicit confirmation for side effects.
+- **Maintainability:** Use type hints, clear contracts, and automated checks.
+- **Reproducibility:** Document setup and evaluation procedures.
+- **Simplicity:** Introduce abstractions only when they solve a concrete problem.
 
 ## Evaluation Strategy
 
-The planned evaluation process will include:
+The following metrics are planned; no RAG evaluation results are available yet.
 
 | Metric | Purpose |
 |---|---|
-| Recall@K | Measure relevant document retrieval |
-| MRR | Measure ranking quality |
-| Answer Correctness | Evaluate factual accuracy |
-| Groundedness | Measure consistency with retrieved context |
-| Source Accuracy | Verify supporting references |
-| Abstention Accuracy | Evaluate handling of insufficient information |
-| Tool Success Rate | Measure successful tool execution |
-| Response Latency | Measure system performance |
-
-Evaluation results will be published after implementation and testing.
+| Recall@K | Measure retrieval of relevant documents |
+| MRR | Measure the rank of the first relevant result |
+| Answer correctness | Evaluate factual accuracy |
+| Groundedness | Evaluate support from retrieved context |
+| Source accuracy | Verify source references |
+| Abstention accuracy | Evaluate behavior when evidence is insufficient |
+| Tool success rate | Measure successful tool execution |
+| Response latency | Measure application performance |
 
 ## Git Workflow
 
-The project uses a simplified branching strategy.
-
 | Branch | Purpose |
 |---|---|
-| `main` | Stable and verified application versions |
+| `main` | Stable releases (intended) |
 | `dev` | Active development and integration |
 | `feature/*` | New functionality |
 | `fix/*` | Bug fixes |
 | `refactor/*` | Code restructuring |
 
-Commit messages follow the Conventional Commits format:
-
-```text
-type(scope): description
-```
-
-Examples:
+Changes are developed on short-lived branches and integrated into `dev` through pull requests. Commits follow the Conventional Commits format:
 
 ```text
 chore(setup): initialize project
-feat(api): add health endpoint
-test(api): add health endpoint integration test
-docs(readme): add installation instructions
-fix(retrieval): handle empty search results
+feat(api): implement chat schemas and request validation
+test(api): add fixtures and parametrized endpoint tests
+refactor(api): separate routing and service logic
 ```
 
 ## Project Goals
 
-This project is being developed as a practical AI engineering
-portfolio project.
-
-The main learning and engineering objectives are:
-
-1. Understand and implement RAG architecture.
-2. Build LLM-powered agents with tool calling.
-3. Develop production-oriented Python APIs.
-4. Apply software testing and evaluation techniques to AI systems.
-5. Explore reliability, observability, and failure handling.
-6. Implement reproducible development and deployment workflows.
-7. Demonstrate end-to-end system design and engineering decisions.
+This project is intended to demonstrate end-to-end AI engineering skills: RAG fundamentals, tool calling, Python backend development, automated testing, evaluation, production reliability, and explainable system design decisions.
 
 ## Security & Data
 
-- All sample documents and support tickets are fictional.
-- No real customer information is used.
-- No proprietary employer data is included.
+- All planned knowledge-base documents and tickets are fictional.
+- No real customer data or proprietary employer information is used.
 - API keys and credentials must never be committed to Git.
-- Future external service credentials will be supplied through
-  environment variables.
-- Actions with side effects will require explicit user confirmation.
-- Tool arguments will be validated before execution.
+- Future credentials will be supplied through environment variables.
+- Actions with side effects will require explicit confirmation and validated arguments.
 
 ## Current Limitations
 
-The project is currently in the initial development stage.
-
-- No LLM integration.
-- No document ingestion pipeline.
-- No vector database integration.
-- No RAG pipeline.
-- No agent orchestration or tool execution.
-- No authentication or authorization.
-- No Docker deployment.
-- No automated CI/CD pipeline.
-
-These capabilities will be implemented progressively according
-to the development roadmap.
+- Chat responses are fixed; no LLM, embeddings, vector database, or RAG pipeline is connected.
+- No agent loop, tool execution, or ticket storage.
+- No authentication, authorization, or production security controls yet.
+- No production deployment, Docker, or CI/CD pipeline yet.
+- Dependency versions are not fully locked; clean-environment installation verification is pending.
+- No retrieval or answer-quality evaluation has been performed yet.
 
 ## License
 
-This project is licensed under the MIT License.
-
-See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
