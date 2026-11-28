@@ -1,7 +1,15 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from supportops.schemas import ChatRequest
+from supportops.api.dependencies import get_chat_service
+from supportops.main import app
+from supportops.schemas import ChatRequest, ChatResponse
+from supportops.services.chat import ChatService
+
+
+class StubChatService(ChatService):
+    def generate_answer(self, request: ChatRequest) -> ChatResponse:
+        return ChatResponse(answer=f"Test answer: {request.message}", sources=["test-document.md"])
 
 
 @pytest.mark.parametrize(
@@ -45,3 +53,18 @@ def test_chat_request_default_top_k() -> None:
 def test_chat_request_strip_whitespace() -> None:
     request = ChatRequest(message="   Hello World   ")
     assert request.message == "Hello World"
+
+
+def test_chat_dependency_override(client: TestClient) -> None:
+    def get_stub_chat_service() -> ChatService:
+        return StubChatService()
+
+    try:
+        app.dependency_overrides[get_chat_service] = get_stub_chat_service
+        response = client.post("/chat", json={"message": "   Hello   ", "top_k": 3})
+
+        assert response.status_code == 200
+        assert response.json() == {"answer": "Test answer: Hello", "sources": ["test-document.md"]}
+
+    finally:
+        app.dependency_overrides.pop(get_chat_service, None)
