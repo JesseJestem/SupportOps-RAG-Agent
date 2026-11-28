@@ -8,8 +8,8 @@ The goal is to build a reliable, testable, and maintainable assistant that answe
 
 > **Status:** In development  
 > **Current stage:** Stage 0 — Setup & Architecture  
-> **Latest completed task:** 0.3 — Chat API Contract & Validation  
-> **Next task:** 0.4 — Application Architecture
+> **Latest completed task:** 0.5 — Dependency Injection  
+> **Next task:** 0.6 — Asynchronous Python
 
 ## Overview
 
@@ -32,13 +32,12 @@ The project uses fictional support scenarios and synthetic documentation. The in
 - Swagger UI, ReDoc, and generated OpenAPI specification.
 - Reusable TestClient fixture with setup and teardown.
 - Parametrized API tests, response contract checks, and Pydantic unit tests, including positive, negative, and boundary cases.
-- **26 automated test cases**; all 26 reported passing for Task 0.3.
+- Separate health and chat routers, registered by the application entry point.
+- ChatService with a typed interface and no dependency on FastAPI or HTTP.
+- Request-scoped ChatService creation through a FastAPI dependency provider and `Depends`.
+- Integration test with a replaceable service and cleanup of dependency overrides.
+- **28 automated test cases**, including service and schema unit tests.
 - Ruff and mypy development tooling.
-- Modular API architecture using FastAPI APIRouter.
-- Separation of API and Service layers.
-- Independently testable ChatService.
-- Application configuration and router registration.
-- 27 automated test cases, including API integration and service unit tests.
 
 The chat endpoint currently returns a fixed response. RAG, LLM integration, and agent tool calling are not yet implemented.
 
@@ -128,11 +127,12 @@ Run individual test modules:
 ```bash
 python -m pytest tests/test_health.py -v
 python -m pytest tests/test_chat.py -v
+python -m pytest tests/test_chat_service.py -v
 ```
 
-The current suite covers 8 health/routing cases, 15 chat validation cases, 1 chat response contract case, and 2 Pydantic unit tests. FastAPI TestClient runs API tests without a separate Uvicorn server or external network requests.
+The current suite covers 8 health/routing cases, 15 chat validation cases, 1 chat response contract case, 2 Pydantic unit tests, 1 ChatService unit test, and 1 dependency override integration test. FastAPI TestClient runs API tests without a separate Uvicorn server or external network requests.
 
-Latest reported result for Task 0.3: `26 passed`. Clean-environment installation verification remains pending.
+Task 0.5: `28 passed` in a review reproduction on Linux (Python 3.13.5, FastAPI 0.128.2, Pydantic 2.13.5, httpx 0.28.1, pytest 9.0.2). The review used the source layout directly rather than a clean package installation. Final local linting, formatting, type checking, dependency checks, and clean-environment verification remain to be confirmed.
 
 ### Code Quality Checks
 
@@ -164,10 +164,19 @@ SupportOps-RAG-Agent/
 │   └── supportops/
 │       ├── __init__.py
 │       ├── main.py
-│       └── schemas.py
+│       ├── schemas.py
+│       ├── api/
+│       │   ├── __init__.py
+│       │   ├── chat.py
+│       │   ├── dependencies.py
+│       │   └── health.py
+│       └── services/
+│           ├── __init__.py
+│           └── chat.py
 ├── tests/
 │   ├── conftest.py
 │   ├── test_chat.py
+│   ├── test_chat_service.py
 │   └── test_health.py
 ├── .gitignore
 ├── LICENSE
@@ -176,7 +185,7 @@ SupportOps-RAG-Agent/
 └── pyproject.toml
 ```
 
-`main.py` currently defines the application and routes. `schemas.py` defines chat request and response contracts. API routers and a service layer will be introduced in Task 0.4.
+`main.py` creates the FastAPI application and registers routers. `api/` handles HTTP routing, `schemas.py` defines request and response contracts, and `services/` contains application logic. `api/dependencies.py` provides a new ChatService per request through FastAPI `Depends`. Tests can substitute the provider with a stub and remove the override afterward. The service remains independent of HTTP.
 
 ## System Architecture
 
@@ -185,11 +194,17 @@ SupportOps-RAG-Agent/
 ```mermaid
 flowchart TD
     Client[HTTP Client] --> API[FastAPI - main.py]
-    API --> Health[Health endpoint]
-    API --> Request[ChatRequest validation]
-    Request --> Stub[Fixed chat response]
-    Stub --> Response[ChatResponse serialization]
+    API --> Health[Health router]
+    API --> Chat[Chat router]
+    Chat --> Request[ChatRequest validation]
+    Request --> Handler[Chat endpoint]
+    Provider[get_chat_service provider] --> DI[FastAPI Depends]
+    DI --> Handler
+    Handler --> Service[ChatService - fixed response]
+    Service --> Response[ChatResponse serialization]
 ```
+
+The integration test replaces `get_chat_service` using `app.dependency_overrides`, verifies that the normalized message reaches a `StubChatService`, and removes the override in a `finally` block. No external LLM client is connected.
 
 ### Planned architecture
 
@@ -271,8 +286,8 @@ Invalid request data returns HTTP 422 using FastAPI's default validation error f
 - [x] 0.1 — Project bootstrap, health endpoint, dependency configuration, and initial checks.
 - [x] 0.2 — Testing fundamentals: fixtures, parametrization, positive and negative cases.
 - [x] 0.3 — REST & Pydantic: chat API contract, validation, and boundary tests.
-- [x] 0.4 — Application architecture: API routers and service layer.
-- [ ] 0.5 — Dependency injection and dependency overrides for testing.
+- [x] 0.4 — Application architecture: API routers and service layer (refactor merged; final local quality checks pending).
+- [x] 0.5 — Dependency injection and dependency overrides for testing (code reviewed; 28 tests passed in review environment).
 - [ ] 0.6 — Asynchronous Python and blocking vs non-blocking I/O.
 - [ ] 0.7 — Final technical review and clean-environment verification.
 
@@ -362,13 +377,14 @@ The following metrics are planned; no RAG evaluation results are available yet.
 | `fix/*` | Bug fixes |
 | `refactor/*` | Code restructuring |
 
-Changes are developed on short-lived branches and integrated into `dev` through pull requests. Commits follow the Conventional Commits format:
+The intended workflow uses short-lived branches and pull requests into `dev`. Commits follow the Conventional Commits format:
 
 ```text
 chore(setup): initialize project
 feat(api): implement chat schemas and request validation
 test(api): add fixtures and parametrized endpoint tests
 refactor(api): separate routing and service logic
+refactor(api): introduce dependency injection and overrides
 ```
 
 ## Project Goals
@@ -387,6 +403,7 @@ This project is intended to demonstrate end-to-end AI engineering skills: RAG fu
 
 - Chat responses are fixed; no LLM, embeddings, vector database, or RAG pipeline is connected.
 - No agent loop, tool execution, or ticket storage.
+- ChatService is constructed directly inside the endpoint; replaceable dependency providers are not yet implemented.
 - No authentication, authorization, or production security controls yet.
 - No production deployment, Docker, or CI/CD pipeline yet.
 - Dependency versions are not fully locked; clean-environment installation verification is pending.
